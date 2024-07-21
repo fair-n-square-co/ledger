@@ -11,5 +11,4 @@ func (l *LedgerServer) Start() {
 
 func NewLedgerServer() *LedgerServer {
 	return &LedgerServer{}
-
 }
