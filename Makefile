@@ -2,8 +2,11 @@
 GOOSE_DRIVER=postgres
 GOOSE_DBSTRING="postgres://postgres:postgres@localhost:5433/ledger?sslmode=disable"
 
+db/start:
+	docker-compose up -d
+
 .PHONY: db/up
-db/up:
+db/up: db/start
 	goose -dir db/migrations postgres $(GOOSE_DBSTRING) up
 
 .PHONY: db/create
