@@ -10,14 +10,21 @@ Will need this in the PATH:
 export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
-Start the database:
+### Database setup:
 
 ```bash
+# Run the migrations
 make db/up
+
+# Start DB client
+make db/client
+
+# Generate go code for SQL queries
+make db/gen
 ```
 
-Run the server:
+### Dev setup:
 
 ```bash
-make run
+make db/start db/up dev
 ```

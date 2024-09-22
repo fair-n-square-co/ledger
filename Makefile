@@ -2,8 +2,13 @@
 GOOSE_DRIVER=postgres
 GOOSE_DBSTRING="postgres://postgres:postgres@localhost:5433/ledger?sslmode=disable"
 
+.PHONY: db/start
 db/start:
 	docker-compose up -d
+
+.PHONY: db/client
+db/client: db/start
+	docker compose exec db psql -U postgres -d ledger
 
 .PHONY: db/up
 db/up: db/start
@@ -22,11 +27,16 @@ db/gen:
 	sqlc generate
 
 # SERVICE
-.Phony: build
+.PHONY: build
 build:
 	go build -o bin/ledger ./cmd/ledger
 
-.Phony: run
+.PHONY: run
 run: build
 	@echo "Starting server..."
 	./bin/ledger
+
+.PHONY: dev
+dev: db/up
+	@echo "Watching for changes..."
+	@air
