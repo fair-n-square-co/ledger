@@ -4,7 +4,12 @@ GOOSE_DBSTRING="postgres://postgres:postgres@localhost:5433/ledger?sslmode=disab
 
 .PHONY: db/start
 db/start:
-	docker-compose up -d
+	docker-compose up -d db
+	@echo "Waiting for db service to become healthy..."
+	@until [ "$$(docker inspect -f {{.State.Health.Status}} $$(docker-compose ps -q db))" = "healthy" ]; do \
+		sleep 1; \
+	done
+	@echo "db service is healthy!"
 
 .PHONY: db/client
 db/client: db/start

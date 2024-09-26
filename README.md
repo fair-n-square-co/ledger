@@ -5,6 +5,11 @@
 go install github.com/pressly/goose/v3/cmd/goose@latest
 ```
 
+- Air
+```bash
+go install github.com/air-verse/air@latest
+```
+
 Will need this in the PATH:
 ```bash
 export PATH=$PATH:$(go env GOPATH)/bin
@@ -26,5 +31,5 @@ make db/gen
 ### Dev setup:
 
 ```bash
-make db/start db/up dev
+make dev
 ```
