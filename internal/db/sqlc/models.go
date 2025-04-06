@@ -11,48 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type LedgerDirection string
-
-const (
-	LedgerDirectionIN  LedgerDirection = "IN"
-	LedgerDirectionOUT LedgerDirection = "OUT"
-)
-
-func (e *LedgerDirection) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = LedgerDirection(s)
-	case string:
-		*e = LedgerDirection(s)
-	default:
-		return fmt.Errorf("unsupported scan type for LedgerDirection: %T", src)
-	}
-	return nil
-}
-
-type NullLedgerDirection struct {
-	LedgerDirection LedgerDirection
-	Valid           bool // Valid is true if LedgerDirection is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullLedgerDirection) Scan(value interface{}) error {
-	if value == nil {
-		ns.LedgerDirection, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.LedgerDirection.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullLedgerDirection) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.LedgerDirection), nil
-}
-
 type TransactionType string
 
 const (
@@ -95,13 +53,14 @@ func (ns NullTransactionType) Value() (driver.Value, error) {
 	return string(ns.TransactionType), nil
 }
 
-type Ledger struct {
+type Share struct {
 	ID                 pgtype.UUID
 	UserID             pgtype.UUID
-	Direction          NullLedgerDirection
 	AmountCurrencyCode string
-	AmountUnits        int64
-	AmountNanos        int32
+	PaidAmountUnits    int64
+	PaidAmountNanos    int32
+	OwedAmountUnits    int64
+	OwedAmountNanos    int64
 	TransactionID      pgtype.UUID
 	CreatedAt          pgtype.Timestamptz
 	UpdatedAt          pgtype.Timestamptz
